@@ -24,11 +24,6 @@ agent_number  = 2
 - `terraform apply`
 
 
-# Install nginx-ingress-controller
-```
-export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-```
 # Demo app
 
 ### index.html
