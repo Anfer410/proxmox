@@ -31,4 +31,12 @@ if [ ! -f /usr/local/bin/k3s ]; then
     echo "Installing k3s server node.."
     # curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server" K3S_NODE_NAME="$1" K3S_TOKEN="$2" K3S_URL="https://$3:6443" sh -s - --disable traefik
     curl -fsL https://get.k3s.io | sh -s - --disable traefik --node-name "$(hostname)"
+
+    # Deploy nginx ingress controller
+    export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+    
+    helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+    helm repo update
+    helm install nginx-ingress ingress-nginx/ingress-nginx --set controller.publishService.enabled=true
 fi

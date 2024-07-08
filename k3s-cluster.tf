@@ -38,3 +38,7 @@ module "k3s_cluster" {
 
   agent_number = var.agent_number  
 }
+
+output "controller_ip" {
+  value = module.k3s_cluster.lxc_ip
+}
