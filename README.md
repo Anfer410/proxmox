@@ -2,10 +2,10 @@
 Create api token for root@pam run on pve terminal:
 `pveum user token add root@pam provider --privsep=0`
 
-Local:
-Install Terraform
+### Local:
+#### Install Terraform
 -  https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
-Install Ansible
+#### Install Ansible
 - https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-and-upgrading-ansible-with-pip
 
 # Example variables
@@ -26,10 +26,10 @@ agent_number  = 2
 ```
 
 # Commands
-In Terraform dir:
+### In Terraform dir:
 - `terraform init`
 - `terraform apply`
-In Ansible dir:
+### In Ansible dir:
 - `python inventory.py`
 - `ansible-playbook -i <inventory_name>.ini playbook.yaml`
 
