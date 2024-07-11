@@ -34,5 +34,11 @@ override.tf.json
 terraform.rc
 
 
-id_rsa.pub
-id_rsa
+*.pub
+*.pem
+
+*inventory*.ini
+*.json
+.terraform
+
+buffer/

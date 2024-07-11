@@ -1,0 +1,38 @@
+---
+- name: Check if conf-kmsg.service Exists
+  stat: path=/etc/systemd/system/kmsg-fix.service
+  register: kmsg_status
+
+- name: Create kmsg-fix service
+  when: kmsg_status.stat.exists != true
+  block:
+    - name: Copy conf-kmsg.sh
+      copy:
+        src: "files/conf-kmsg.sh"
+        dest: "/usr/local/bin/conf-kmsg.sh"
+        mode: +x
+    - name: Copy kmsg-fix.service
+      copy:
+        src: "files/kmsg-fix.service"
+        dest: "/etc/systemd/system/kmsg-fix.service"        
+
+- name: Start kmsg-fix service
+  systemd_service:
+    name: kmsg-fix.service
+    state: started
+    enabled: true
+    daemon_reload: true
+
+- name: Install curl
+  apt:
+    name: curl
+    state: present
+    update_cache: yes
+    cache_valid_time: 86400 #One day
+
+- name: Install python3-yaml
+  apt:
+    name: python3-yaml
+    state: present
+    update_cache: yes
+    cache_valid_time: 86400 #One day

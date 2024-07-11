@@ -126,13 +126,12 @@ output "lxc_hostname" {
 
 output "lxc_user" {
   value     = "root"
-  sensitive = true
 }
 
-output "lxc_user_password" {
-  value     = var.password
-  sensitive = true
-}
+# output "lxc_user_password" {
+#   value     = var.password
+#   sensitive = true
+# }
 
 # output "lxc_ssh_private_key" {
 #   value = var.ssh_private_key

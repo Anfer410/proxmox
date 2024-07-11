@@ -1,0 +1,72 @@
+---
+- name: Get k3s installed version
+  ansible.builtin.command: k3s --version
+  register: k3s_version_output
+  changed_when: false
+  ignore_errors: true
+
+- name: Set k3s installed version
+  when: k3s_version_output.rc == 0
+  ansible.builtin.set_fact:
+    installed_k3s_version: "{{ k3s_version_output.stdout_lines[0].split(' ')[2] }}"
+
+- name: Download artifact only if needed
+  when: k3s_version_output.rc != 0
+  block:
+    - name: Download K3s install script
+      ansible.builtin.get_url:
+        url: https://get.k3s.io/
+        timeout: 120
+        dest: /usr/local/bin/k3s-install.sh
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Install K3s
+      ansible.builtin.shell:
+        cmd: /usr/local/bin/k3s-install.sh --disable traefik --node-name $(hostname)
+      changed_when: true
+
+- name: Get token
+  fetch: 
+    src: /var/lib/rancher/k3s/server/node-token
+    dest: buffer/node-token
+    flatten: false
+
+
+- name: Setup kubectl for user
+  block:
+    - name: Create kubectl symlink
+      when: lookup('fileglob', '/usr/local/bin/kubectl', errors='warn') | length == 0
+      ansible.builtin.file:
+        src: /usr/local/bin/k3s
+        dest: /usr/local/bin/kubectl
+        state: link
+
+    - name: Create directory .kube
+      ansible.builtin.file:
+        path: /root/.kube
+        state: directory
+        owner: "root"
+        mode: "u=rwx,g=rx,o="
+
+    - name: Copy config file to user home directory
+      ansible.builtin.copy:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: /root/.kube/config
+        remote_src: true
+        owner: "root"
+        mode: "u=rw,g=,o="
+
+    - name: Configure default KUBECONFIG for user
+      ansible.builtin.lineinfile:
+        path: /root/.bashrc
+        regexp: 'export KUBECONFIG=~/.kube/config'
+        line: 'export KUBECONFIG=~/.kube/config # Added by k3s-ansible'
+        state: present
+
+    - name: Configure kubectl autocomplete
+      ansible.builtin.lineinfile:
+        path: /root/.bashrc
+        regexp: '\.\s+<\(kubectl completion bash\)'
+        line: ". <(kubectl completion bash)  # Added by k3s-ansible"

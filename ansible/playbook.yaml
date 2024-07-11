@@ -1,0 +1,23 @@
+---
+- name: Controller init
+  hosts: controller
+  become: yes
+  gather_facts: true
+  roles:
+    - role: k3s_preq_lxc
+    - role: k3s_server_lxc
+
+- name: Agent init
+  hosts: agent
+  become: yes
+  gather_facts: true
+  roles:
+    - role: k3s_preq_lxc
+    - role: k3s_agent_lxc
+
+- name: Deploy helm charts
+  hosts: controller
+  become: yes
+  gather_facts: true
+  roles:
+    - role: helm

@@ -1,6 +1,6 @@
 locals {
   debian_container_template = {
-    template_file_id = var.debian_image_location
+    template_file_id = var.pull_ct ? proxmox_virtual_environment_file.debian_container_template[0].file_name : var.debian_image_location
     type             = "debian"
   }
 }

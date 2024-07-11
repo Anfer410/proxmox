@@ -1,0 +1,48 @@
+---
+  # Install Helm
+  - name: Download Helm command line tool
+    ansible.builtin.uri:
+      url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+      return_content: true
+    register: helm_installer
+
+  - name: Install Helm
+    ansible.builtin.command:
+      cmd: bash
+      stdin: "{{ helm_installer.content }}"
+      creates: /usr/local/bin/helm
+    environment:
+      DESIRED_VERSION: "{{ helm_version | default('') }}"
+
+  # Configure NGINX Ingress
+  - name: Add NGINX Ingress Controller repo
+    kubernetes.core.helm_repository:
+      name: stable
+      repo_url: "https://kubernetes.github.io/ingress-nginx"
+  
+  - name: Deploy NGINX Ingress controller
+    kubernetes.core.helm:
+      name: ingress-nginx
+      update_repo_cache: true
+      chart_ref: stable/ingress-nginx
+      release_namespace: default
+      set_values:
+        - value: controller.publishService.enabled=true
+          value_type: string
+  
+  # Configure Portainer
+  - name: Add Portainer repo
+    kubernetes.core.helm_repository:
+      name: portainer
+      repo_url: "https://portainer.github.io/k8s/"
+
+  - name: Deploy Portainer
+    kubernetes.core.helm:
+      name: portainer
+      update_repo_cache: true
+      chart_ref: portainer/portainer
+      release_namespace: portainer
+      create_namespace: true
+      set_values:
+        - value: tls.force=true
+          value_type: string
