@@ -1,7 +1,12 @@
 ## Pre req
-Generate id_rsa key pair and store them in keys dir
+Create api token for root@pam run on pve terminal:
+`pveum user token add root@pam provider --privsep=0`
 
-Create api token for root@pam
+Local:
+Install Terraform
+-  https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
+Install Ansible
+- https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-and-upgrading-ansible-with-pip
 
 # Example variables
 local.auto.tfvar
@@ -9,7 +14,7 @@ local.auto.tfvar
 pve_user           = "root"
 pve_realm          = "pam"
 pve_api_token      = "<token>"
-pve_api_token_name = "<token_name>"
+pve_api_token_name = "provider"
 pve_password       = "<password>"
 pve_node_endpoint  = "<ip_addr>"
 pve_node_id        = "pve"
@@ -17,11 +22,24 @@ pve_node_id        = "pve"
 
 public_bridge = "vmbr0"
 agent_number  = 2
+
 ```
 
 # Commands
+In Terraform dir:
 - `terraform init`
 - `terraform apply`
+In Ansible dir:
+- `python inventory.py`
+- `ansible-playbook -i <inventory_name>.ini playbook.yaml`
+
+# Portainer
+As part of this playbook we deploy helm chart with portainer
+go to https://<controller-ip>:30779
+
+
+
+
 
 
 # Demo app
