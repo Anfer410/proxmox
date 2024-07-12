@@ -1,6 +1,6 @@
 ## Pre req
 Create api token for root@pam run on pve terminal:
-`pveum user token add root@pam provider --privsep=0`
+```pveum user token add root@pam provider --privsep=0```
 
 ### Local:
 #### Install Terraform
@@ -31,15 +31,10 @@ agent_number  = 2
 - `terraform apply`
 ### In Ansible dir:
 - `python inventory.py`
-- `ansible-playbook -i <inventory_name>.ini playbook.yaml`
+- `ansible-playbook -i inventory/<inventory_name>.ini playbooks/k3s-cluster-create.yaml`
 
 # Portainer
 As part of this playbook we deploy helm chart with portainer
-go to https://<controller-ip>:30779
-
-
-
-
 
 
 # Demo app

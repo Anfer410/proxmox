@@ -3,10 +3,18 @@ import os
 import glob
 from datetime import datetime
 import json
+
 location = os.path.dirname(os.path.realpath(__file__))
+inventory_dir = "inventory/"
 
 
-def main():
+def check_inventory_store():
+    if not os.path.isdir(inventory_dir):
+        print(f"Creating {inventory_dir}")
+        os.makedirs(inventory_dir)
+
+
+def populate_inventory():
     for filename in glob.glob(os.path.join(os.getcwd(), "inventory-raw", '*.json')):
         with open(filename, 'r') as f:
             file = f.read()
@@ -17,10 +25,10 @@ def main():
             except Exception:
                 cluster_prefix = ""
 
-            with open(f"{cluster_prefix}inventory.ini", "w") as f:
+            with open(f"{inventory_dir}{cluster_prefix}inventory.ini", "w") as f:
                 f.write(f"; Created an managed by script, last update {datetime.now()}\n")
-            
-            with open(f"{cluster_prefix}inventory.ini", "a") as i:
+
+            with open(f"{inventory_dir}{cluster_prefix}inventory.ini", "a") as i:
                 # Controller
                 i.write("[controller]\n")
                 i.write(f"{decoded_file['controller']}")
@@ -41,6 +49,11 @@ def main():
                 i.write("ansible_user=root")
 
     print("Sucess!")
+
+
+def main():
+    check_inventory_store()
+    populate_inventory()
 
 
 if __name__ == "__main__":

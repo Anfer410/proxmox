@@ -46,3 +46,8 @@
       set_values:
         - value: tls.force=true
           value_type: string
+
+  - debug:
+      msg:
+        - "Portainer helm chart deployed, please wait up to 30s before it will start"
+        - "Please access it at https://{{  hostvars[groups['controller'][0]]['ansible_default_ipv4'].address }}:30779 to configure admin account"

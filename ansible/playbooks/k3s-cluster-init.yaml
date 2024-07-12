@@ -15,9 +15,9 @@
     - role: k3s_preq_lxc
     - role: k3s_agent_lxc
 
-- name: Deploy helm charts
+- name: Init Ingress Controller and Portainer
   hosts: controller
   become: yes
   gather_facts: true
   roles:
-    - role: helm
+    - role: k3s_helm_init
